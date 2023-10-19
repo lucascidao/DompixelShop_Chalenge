@@ -21,8 +21,7 @@ class ProductController extends Controller
             $this->productService->register($request);
             return response()->json('Product saved!', 200);
         }catch(Exception $e){
-            report($e);
-            return response()->json('Error while saving the product'); 
+            return response()->json(['message'=>'Error while saving the product','error'=> $e->getMessage()],403); 
         }
         
 
@@ -46,6 +45,7 @@ class ProductController extends Controller
         try{
             return $this->productService->list();
         }catch(Exception $e){
+            dump($e);
             return response()->json('Error while listing all the product');
         }
     }

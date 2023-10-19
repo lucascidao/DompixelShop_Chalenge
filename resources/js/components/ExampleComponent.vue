@@ -23,8 +23,8 @@
       </div>
       <!-- update model -->
       <b-container fluid>
-      <b-modal :id="infoModal.id" :title="infoModal.title" @hide="resetInfoModal" hide-footer>
-        <b-form @submit="onSubmit">
+      <b-modal :id="infoModal.id" :title="infoModal.title" @hide="resetInfoModal" ref="update-modal" hide-footer>
+        <b-form @submit.prevent="onSubmit" :value="csrf">
           <b-form-group id="input-group-1" label="Name:" label-for="input-1">
             <b-form-input id="input-1" v-model="form.name" placeholder="Enter name" required></b-form-input>
           </b-form-group>
@@ -43,8 +43,8 @@
       </b-container>
 
       <!-- delete modal -->
-      <b-modal :id="deleteModal.id" :title="deleteModal.title" @hide="resetDeleteModal" hide-footer>
-        <b-form @submit="onDelete">
+      <b-modal :id="deleteModal.id" :title="deleteModal.title" @hide="resetDeleteModal" ref="delete-modal" hide-footer>
+        <b-form @submit.prevent="onDelete">
           <div>Confirm to delete the product</div>
           <div class="row d-flex flex-row-reverse px-2">
             <b-button type="submit" variant="danger" class="mt-4">Delete</b-button>
@@ -61,6 +61,7 @@
 export default {
   data() {
     return {
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
       fields: ['id', 'name', 'description', 'price', 'quantity', 'actions'],
       items: [],
       form: {
@@ -69,7 +70,7 @@ export default {
         price: '',
         quantity: ''
       },
-      id:'',
+      id:null,
       infoModal: {
         id: 'info-modal',
         title: '',
@@ -96,28 +97,42 @@ export default {
         });
     },
     onSubmit() {
-      if (this.id != '') {
+      if (this.id != null) {
         axios
           .post('http://localhost/api/update/' + this.id, this.form)
           .then(response => {
+            this.resetInfoModal();
+            this.$refs['update-modal'].hide()
+            this.fetchDataFromAPI();
+
           })
           .catch(error => {
             console.log(error);
           });
       }
-      axios
-        .post('http://localhost/api/register/', this.form)
-        .then(response => {
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      else{
+        axios
+          .post('http://localhost/api/register/', this.form)
+          .then(response => {
+            console.log(response)
+            this.resetInfoModal();
+            this.$refs['update-modal'].hide()
+            this.fetchDataFromAPI();
+
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
 
     },
     onDelete() {
       axios
         .delete('http://localhost/api/delete/' + this.id)
         .then(response => {
+          this.fetchDataFromAPI();
+          this.$refs['delete-modal'].hide()
+
         })
         .catch(error => {
           console.log(error);
@@ -144,7 +159,7 @@ export default {
     },
     resetInfoModal() {
       this.infoModal.title = ''
-      this.id = '';
+      this.id = null;
       this.form.name = '';
       this.form.description = '';
       this.form.price = '';
