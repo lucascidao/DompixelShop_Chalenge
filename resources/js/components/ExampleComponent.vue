@@ -3,33 +3,39 @@
     <div class="w-100 row mb-3" style="height: 50px;">
       <div class="col-6 d-flex align-items-center "><span class="font-weight-bold">Cadastro de Produtos</span></div>
       <div class="col-6 d-flex  align-items-center flex-row-reverse "><b-button variant="primary"
-          @click="infoStore($event.target)" >Add Product</b-button>
-        </div>
+          @click="infoStore($event.target)">Add Product</b-button>
       </div>
-      <div>
-        <b-table striped hover :items="items" :fields="fields" bordered responsive	>
-          <template #cell(actions)="row">
+    </div>
+    <div>
+      <b-table id="my-table" striped hover :items="items" :fields="fields" bordered :per-page="perPage"
+        :current-page="currentPage" responsive>
+        <template #cell(actions)="row">
 
-              <b-button size="sm" class="mr-2 mb-2 mb-sm-0" variant="info" @click="info(row.item, $event.target)">
-                Edit
-              </b-button>
-       
+          <b-button size="sm" class="mr-2 mb-2 mb-sm-0" variant="info" @click="info(row.item, $event.target)">
+            Edit
+          </b-button>
 
-            <b-button size="sm" class="mr-2" variant="danger" @click="infoDelete(row.item, $event.target)">
-              Delete
-            </b-button>
-          </template></b-table>
 
+          <b-button size="sm" class="mr-2" variant="danger" @click="infoDelete(row.item, $event.target)">
+            Delete
+          </b-button>
+        </template></b-table>
+      <div class="d-flex  align-items-center flex-row-reverse">
+        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"
+          aria-controls="my-table"></b-pagination>
       </div>
-      <!-- update model -->
-      <b-container fluid>
+
+
+    </div>
+    <!-- update model -->
+    <b-container fluid>
       <b-modal :id="infoModal.id" :title="infoModal.title" @hide="resetInfoModal" ref="update-modal" hide-footer>
         <b-form @submit.prevent="onSubmit" :value="csrf">
           <b-form-group id="input-group-1" label="Name:" label-for="input-1">
             <b-form-input id="input-1" v-model="form.name" placeholder="Enter name" required></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-2" label="Description:" label-for="input-2">
-            <b-form-input id="input-2" v-model="form.description" placeholder="Enter description" ></b-form-input>
+            <b-form-input id="input-2" v-model="form.description" placeholder="Enter description"></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-3" label="Price:" label-for="input-3">
             <b-form-input id="input-3" v-model="form.price" placeholder="Enter price" required></b-form-input>
@@ -40,17 +46,17 @@
           <b-button type="submit" variant="primary">Submit</b-button>
         </b-form>
       </b-modal>
-      </b-container>
+    </b-container>
 
-      <!-- delete modal -->
-      <b-modal :id="deleteModal.id" :title="deleteModal.title" @hide="resetDeleteModal" ref="delete-modal" hide-footer>
-        <b-form @submit.prevent="onDelete">
-          <div>Confirm to delete the product</div>
-          <div class="row d-flex flex-row-reverse px-2">
-            <b-button type="submit" variant="danger" class="mt-4">Delete</b-button>
-          </div>
-        </b-form>
-      </b-modal>
+    <!-- delete modal -->
+    <b-modal :id="deleteModal.id" :title="deleteModal.title" @hide="resetDeleteModal" ref="delete-modal" hide-footer>
+      <b-form @submit.prevent="onDelete">
+        <div>Confirm to delete the product</div>
+        <div class="row d-flex flex-row-reverse px-2">
+          <b-button type="submit" variant="danger" class="mt-4">Delete</b-button>
+        </div>
+      </b-form>
+    </b-modal>
 
 
   </b-container>
@@ -61,6 +67,8 @@
 export default {
   data() {
     return {
+      perPage: 5,
+      currentPage: 1,
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
       fields: ['id', 'name', 'description', 'price', 'quantity', 'actions'],
       items: [],
@@ -70,7 +78,7 @@ export default {
         price: '',
         quantity: ''
       },
-      id:null,
+      id: null,
       infoModal: {
         id: 'info-modal',
         title: '',
@@ -79,6 +87,11 @@ export default {
         id: 'delete-modal',
         title: '',
       }
+    }
+  },
+  computed: {
+    rows() {
+      return this.items.length
     }
   },
   mounted() {
@@ -110,11 +123,10 @@ export default {
             console.log(error);
           });
       }
-      else{
+      else {
         axios
           .post('http://localhost/api/register/', this.form)
           .then(response => {
-            console.log(response)
             this.resetInfoModal();
             this.$refs['update-modal'].hide()
             this.fetchDataFromAPI();
@@ -168,10 +180,6 @@ export default {
     resetDeleteModal() {
       this.deleteModal.title = '';
     },
-
-    testUpdate() {
-
-    }
 
   },
 
