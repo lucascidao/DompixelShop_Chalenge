@@ -1,11 +1,11 @@
 DompixelShop
 
-Projeto que simular uma listagem simples de produtos diversos.
+Projeto que simula uma listagem simples de produtos diversos utilizando Laravel e Vue.JS 2.
 
 
 ## Requisitos
 
--Docker
+- Docker
 
 ## Instalação
 => Rode o "composer install" <br/>
