@@ -18,7 +18,7 @@ Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 
-import ExampleComponent from './components/ExampleComponent.vue';
+import ExampleComponent from './components/home.vue';
 Vue.component('example-component', ExampleComponent);
 
 const app = new Vue({

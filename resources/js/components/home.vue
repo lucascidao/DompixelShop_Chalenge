@@ -1,12 +1,20 @@
 <template>
-  <b-container fluid>
-    <div class="w-100 row mb-3" style="height: 50px;">
-      <div class="col-6 d-flex align-items-center "><span class="font-weight-bold">Cadastro de Produtos</span></div>
-      <div class="col-6 d-flex  align-items-center flex-row-reverse "><b-button variant="primary"
-          @click="infoStore($event.target)">Add Product</b-button>
+  <div>
+    <b-container fluid>
+      <!-- Header -->
+      <div class="row mb-3 w-100" style="height: 50px;">
+        <div class="col-6 d-flex align-items-center "><span class="font-weight-bold fs-2">Cadastro de Produtos</span>
+        </div>
+        <div class="col-6 d-flex  align-items-center flex-row-reverse "><b-button variant="primary"
+            @click="infoStore($event.target)">Add Product</b-button>
+        </div>
       </div>
-    </div>
-    <div>
+      <!-- Pagination -->
+      <div class="d-flex  align-items-center flex-row-reverse">
+        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"
+          aria-controls="my-table"></b-pagination>
+      </div>
+      <!-- Table -->
       <b-table id="my-table" striped hover :items="items" :fields="fields" bordered :per-page="perPage"
         :current-page="currentPage" responsive>
         <template #cell(actions)="row">
@@ -15,19 +23,13 @@
             Edit
           </b-button>
 
-
           <b-button size="sm" class="mr-2" variant="danger" @click="infoDelete(row.item, $event.target)">
             Delete
           </b-button>
         </template></b-table>
-      <div class="d-flex  align-items-center flex-row-reverse">
-        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"
-          aria-controls="my-table"></b-pagination>
-      </div>
+    </b-container>
 
-
-    </div>
-    <!-- update model -->
+    <!-- update and create model -->
     <b-container fluid>
       <b-modal :id="infoModal.id" :title="infoModal.title" @hide="resetInfoModal" ref="update-modal" hide-footer>
         <b-form @submit.prevent="onSubmit" :value="csrf">
@@ -41,7 +43,7 @@
             <b-form-input id="input-3" v-model="form.price" placeholder="Enter price" required></b-form-input>
           </b-form-group>
           <b-form-group id="input-group-4" label="Quantity:" label-for="input-4">
-            <b-form-input id="input-4" v-model="form.quantity" placeholder="Enter quantity" required></b-form-input>
+            <b-form-input id="input-4" v-model="form.quantity" type="number" placeholder="Enter quantity" required></b-form-input>
           </b-form-group>
           <b-button type="submit" variant="primary">Submit</b-button>
         </b-form>
@@ -58,10 +60,8 @@
       </b-form>
     </b-modal>
 
-
-  </b-container>
+  </div>
 </template>
-
 
 <script>
 export default {
